@@ -2,7 +2,10 @@ package br.com.propay.portaldorh.com.br.time.shit;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 
 import org.openqa.selenium.WebDriver;
@@ -14,16 +17,15 @@ public class PropayTimeShitApontatorTabajara {
 
 	private static WebDriver driver;
 	private static final String PROPAY_PORTAL_RH = "https://propay.portaldorh.com.br/portal_taco/";
-	private static final String LOGIN = "0011521924";
-	private static final String SENHA = "*********";
-	private static String HORA_ENTRADA = "0800";
-	private static String HORA_SAIDA = "1700";
+	private static final String LOGIN = "00********";	
+	private static final String SENHA = "*********";	
+	private static String HORA_ENTRADA = "08";
+	private static String HORA_SAIDA = "17";
 
 	public static void main(String[] args) throws InterruptedException {
 
 		String currentDir = System.getProperty("user.dir");
 		System.out.println("Current dir using System:" + currentDir);
-		
 
 		System.out.println("Setting webdriver for Google Chrome, find file chromedriver.exe in directory" + currentDir);
 		System.setProperty("webdriver.chrome.driver", currentDir.concat("\\chromedriver.exe"));
@@ -44,7 +46,7 @@ public class PropayTimeShitApontatorTabajara {
 		goToUrl("Produtos/NorberMyWay2010/NorberRedirecionamento.aspx?paginaAsp=just_user/justuser.asp&dv=webponto12");
 		moveToLastWindowsHandle();
 		driver.switchTo().frame(0);
-		Thread.sleep(10000);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		driver.findElement(By.xpath("//a[contains(@href,'IncluirMarcacao')]")).click();
 		moveToLastWindowsHandle();
 
@@ -52,7 +54,7 @@ public class PropayTimeShitApontatorTabajara {
 		System.out.println("Preenche o apontamento na data de hoje");
 		fillTimeShit();
 
-		Thread.sleep(500000);
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.MINUTES);
 		driver.quit();
 	}
 
@@ -82,8 +84,11 @@ public class PropayTimeShitApontatorTabajara {
 	 */
 	public static void fillTimeShit() {
 		selectComboValue("Data", getCurrentDate());
-		driver.findElement(By.name("Horario1")).sendKeys(HORA_ENTRADA);
-		driver.findElement(By.name("Horario2")).sendKeys(HORA_SAIDA);
+
+		String randomMinute = StringUtils.leftPad(Integer.toString(generateMinuteRandom()), 2, "0");
+
+		driver.findElement(By.name("Horario1")).sendKeys(HORA_ENTRADA.concat(randomMinute));
+		driver.findElement(By.name("Horario2")).sendKeys(HORA_SAIDA.concat(randomMinute));
 		selectComboValue("cmbMotivo", "Funcionário Marca Ponto Manual");
 		driver.findElement(By.className("BotaoAchatado")).click();
 	}
@@ -117,4 +122,9 @@ public class PropayTimeShitApontatorTabajara {
 		final Select selectBox = new Select(driver.findElement(By.name(elementId)));
 		selectBox.selectByValue(value);
 	}
+
+	public static int generateMinuteRandom() {
+		return ThreadLocalRandom.current().nextInt(1, 32);
+	}
+
 }
