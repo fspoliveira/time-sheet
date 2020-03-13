@@ -54,8 +54,8 @@ public class PropayTimeShitApontatorTabajara {
 		System.out.println("Preenche o apontamento na data de hoje");
 		fillTimeShit();
 
-		Boolean m = new WebDriverWait(driver, 10)
-				.until(ExpectedConditions.textToBePresentInElementValue(By.name("Submit22"), "Fechar"));
+		new WebDriverWait(driver, 10)
+		.until(ExpectedConditions.visibilityOfElementLocated(By.name("Submit22")));	
 		
 		driver.quit();
 	}
