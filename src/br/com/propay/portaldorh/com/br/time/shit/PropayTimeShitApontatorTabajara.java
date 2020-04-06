@@ -92,7 +92,10 @@ public class PropayTimeShitApontatorTabajara {
 		driver.findElement(By.name("Horario1")).sendKeys(HORA_ENTRADA.concat(randomMinute));
 		driver.findElement(By.name("Horario2")).sendKeys(HORA_SAIDA.concat(randomMinute));
 		selectComboValue("cmbMotivo", "Funcionário Marca Ponto Manual");
-		driver.findElement(By.className("BotaoAchatado")).click();
+		
+		WebDriverWait wait = new WebDriverWait(driver, 30);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.name("button")));		
+		driver.findElement(By.name("button")).click();
 	}
 
 	/**
